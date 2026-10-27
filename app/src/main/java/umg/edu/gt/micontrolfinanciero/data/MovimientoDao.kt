@@ -23,4 +23,10 @@ interface MovimientoDao {
     // Obtiene únicamente los ingresos o los gastos.
     @Query("SELECT * FROM movimientos WHERE tipo = :tipo ORDER BY fecha DESC, id DESC")
     fun obtenerPorTipo(tipo: String): Flow<List<MovimientoEntity>>
+
+
+    // Obtener un movimiento específico por su identificador.
+    @Query("SELECT * FROM movimientos WHERE id = :id LIMIT 1")
+    suspend fun obtenerPorId(id: Long): MovimientoEntity?
+
 }

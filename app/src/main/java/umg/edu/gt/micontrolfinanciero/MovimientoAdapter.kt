@@ -1,5 +1,6 @@
 package umg.edu.gt.micontrolfinanciero
 
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import umg.edu.gt.micontrolfinanciero.data.MovimientoEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.Intent
+
 
 class MovimientoAdapter(
     private var movimientos: List<MovimientoEntity> = emptyList()
@@ -85,6 +88,23 @@ class MovimientoAdapter(
         }
 
         holder.txtImporte.setTextColor(color)
+
+        // Abrir los detalles al seleccionar una tarjeta.
+        holder.itemView.setOnClickListener {
+
+            val contexto = holder.itemView.context
+
+            val intent = Intent(
+                contexto,
+                DetalleMovimientoActivity::class.java
+            )
+
+            // Enviamos el ID del movimiento seleccionado.
+            intent.putExtra("MOVIMIENTO_ID", movimiento.id)
+
+            contexto.startActivity(intent)
+        }
+
     }
 
     // Devuelve la cantidad de movimientos.
@@ -99,4 +119,6 @@ class MovimientoAdapter(
         movimientos = nuevosMovimientos
         notifyDataSetChanged()
     }
+
+
 }

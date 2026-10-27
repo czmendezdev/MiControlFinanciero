@@ -27,4 +27,11 @@ class MovimientoRepository(
     fun obtenerMovimientosPorTipo(tipo: String): Flow<List<MovimientoEntity>> {
         return movimientoDao.obtenerPorTipo(tipo)
     }
+
+
+    // Obtiene un movimiento específico por su ID.
+    suspend fun obtenerMovimientoPorId(id: Long): MovimientoEntity? {
+        return movimientoDao.obtenerPorId(id)
+    }
+
 }

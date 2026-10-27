@@ -31,6 +31,13 @@
             android:name=".HistorialMovimientosActivity"
             android:exported="false" />
 
+
+        <!-- Pantalla de detalles de un movimiento -->
+        <activity
+            android:name=".DetalleMovimientoActivity"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>
