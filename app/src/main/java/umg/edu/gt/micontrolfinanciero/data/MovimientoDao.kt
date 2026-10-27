@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import androidx.room.Update
+import androidx.room.Delete
 
 /**
  * Define las operaciones de acceso a los movimientos
@@ -34,6 +35,11 @@ interface MovimientoDao {
     // Actualizar un movimiento existente.
     @Update
     suspend fun actualizarMovimiento(movimiento: MovimientoEntity)
+
+
+    // Elimina un movimiento existente de la base de datos.
+    @Delete
+    suspend fun eliminarMovimiento(movimiento: MovimientoEntity)
 
 
 }

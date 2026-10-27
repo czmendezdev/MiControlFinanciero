@@ -14,6 +14,7 @@ import java.util.Date
 import java.util.Locale
 import android.content.Intent
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class DetalleMovimientoActivity : AppCompatActivity() {
@@ -50,6 +51,11 @@ class DetalleMovimientoActivity : AppCompatActivity() {
             findViewById<MaterialButton>(R.id.btnEditarMovimiento)
 
 
+        // Identificamos el botón para eliminar movimientos.
+        val btnEliminarMovimiento =
+            findViewById<MaterialButton>(R.id.btnEliminarMovimiento)
+
+
         // Recibimos el identificador del movimiento.
         movimientoId = intent.getLongExtra("MOVIMIENTO_ID", -1L)
 
@@ -66,6 +72,60 @@ class DetalleMovimientoActivity : AppCompatActivity() {
             intentEdicion.putExtra("MOVIMIENTO_ID", movimientoId)
 
             startActivity(intentEdicion)
+        }
+
+
+// Solicitamos confirmación antes de eliminar.
+        btnEliminarMovimiento.setOnClickListener {
+
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Eliminar movimiento")
+                .setMessage(
+                    "¿Estás seguro de que deseas eliminar este movimiento? " +
+                            "Esta acción no se puede deshacer."
+                )
+                .setNegativeButton("Cancelar", null)
+
+                .setPositiveButton("Eliminar") { _, _ ->
+
+                    lifecycleScope.launch {
+                        try {
+                            // Buscamos el movimiento que se desea eliminar.
+                            val movimiento =
+                                repositorio.obtenerMovimientoPorId(movimientoId)
+
+                            if (movimiento == null) {
+                                Toast.makeText(
+                                    this@DetalleMovimientoActivity,
+                                    "No se encontró el movimiento",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@launch
+                            }
+
+                            // Eliminamos el movimiento de Room.
+                            repositorio.eliminarMovimiento(movimiento)
+
+                            Toast.makeText(
+                                this@DetalleMovimientoActivity,
+                                "Movimiento eliminado correctamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            // Regresamos al historial.
+                            finish()
+
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                this@DetalleMovimientoActivity,
+                                "Error al eliminar el movimiento",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+
+                .show()
         }
 
 

@@ -41,4 +41,10 @@ class MovimientoRepository(
     }
 
 
+    // Elimina un movimiento existente de la base de datos.
+    suspend fun eliminarMovimiento(movimiento: MovimientoEntity) {
+        movimientoDao.eliminarMovimiento(movimiento)
+    }
+
+
 }
