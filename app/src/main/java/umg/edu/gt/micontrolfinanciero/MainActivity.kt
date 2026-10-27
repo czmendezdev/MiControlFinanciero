@@ -11,6 +11,8 @@ import umg.edu.gt.micontrolfinanciero.data.MovimientoRepository
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch //Inicia una corrutina, que utilizaremos para observar los movimientos almacenados en Room.//
+import android.content.Intent
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +32,30 @@ class MainActivity : AppCompatActivity() {
         val txtSaldoGTQ = findViewById<TextView>(R.id.txtSaldoGTQ)
         val txtSaldoUSD = findViewById<TextView>(R.id.txtSaldoUSD)
         val txtSaldoEUR = findViewById<TextView>(R.id.txtSaldoEUR)
+
+
+
+        // Identificamos los botones de la pantalla principal
+        val btnRegistrarIngreso =
+            findViewById<MaterialButton>(R.id.btnRegistrarIngreso)
+
+        val btnRegistrarGasto =
+            findViewById<MaterialButton>(R.id.btnRegistrarGasto)
+
+        // Abrir formulario para registrar un ingreso
+        btnRegistrarIngreso.setOnClickListener {
+            val intent = Intent(this, RegistrarMovimientoActivity::class.java)
+            intent.putExtra("TIPO_MOVIMIENTO", "INGRESO")
+            startActivity(intent)
+        }
+
+        // Abrir formulario para registrar un gasto
+        btnRegistrarGasto.setOnClickListener {
+            val intent = Intent(this, RegistrarMovimientoActivity::class.java)
+            intent.putExtra("TIPO_MOVIMIENTO", "GASTO")
+            startActivity(intent)
+        }
+
 
         // Observamos los movimientos guardados en la base de datos.
         lifecycleScope.launch {

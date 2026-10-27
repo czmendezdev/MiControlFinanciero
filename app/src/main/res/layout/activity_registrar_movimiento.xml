@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Contenedor principal del formulario -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9F8"
+    tools:context=".RegistrarMovimientoActivity">
+
+    <!-- Título del formulario -->
+    <TextView
+        android:id="@+id/txtTituloMovimiento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:text="Registrar movimiento"
+        android:textColor="#174C49"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Instrucción para el usuario -->
+    <TextView
+        android:id="@+id/txtDescripcionMovimiento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="Completa los datos para guardar tu movimiento."
+        android:textColor="#64748B"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/txtTituloMovimiento"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Campo para escribir el concepto del movimiento -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/contenedorConcepto"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Concepto del movimiento"
+        app:boxStrokeColor="#147D70"
+        app:layout_constraintTop_toBottomOf="@id/txtDescripcionMovimiento"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Espacio donde el usuario escribe el concepto -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtConcepto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLength="100"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Campo para ingresar la cantidad de dinero -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/contenedorImporte"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Importe"
+        app:boxStrokeColor="#147D70"
+        app:layout_constraintTop_toBottomOf="@id/contenedorConcepto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Entrada numérica para cantidades con decimales -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtImporte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:digits="0123456789."
+            android:singleLine="true"
+            android:maxLength="15" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <!-- Etiqueta para seleccionar la moneda -->
+    <TextView
+        android:id="@+id/txtEtiquetaMoneda"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Moneda"
+        android:textColor="#174C49"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/contenedorImporte"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Grupo de botones para elegir una sola moneda -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/grupoMonedas"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:checkedButton="@id/btnMonedaGTQ"
+        app:layout_constraintTop_toBottomOf="@id/txtEtiquetaMoneda"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Quetzales -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMonedaGTQ"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="GTQ" />
+
+        <!-- Dólares -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMonedaUSD"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="USD" />
+
+        <!-- Euros -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMonedaEUR"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="EUR" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+
+    <!-- Etiqueta del campo fecha -->
+    <TextView
+        android:id="@+id/txtEtiquetaFecha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Fecha del movimiento"
+        android:textColor="#174C49"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/grupoMonedas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botón para mostrar y seleccionar la fecha -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSeleccionarFecha"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:text="Seleccionar fecha"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="#174C49"
+        app:strokeColor="#147D70"
+        app:layout_constraintTop_toBottomOf="@id/txtEtiquetaFecha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- Botón para guardar el ingreso o gasto -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGuardarMovimiento"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="Guardar movimiento"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#147D70"
+        app:cornerRadius="14dp"
+        app:layout_constraintTop_toBottomOf="@id/btnSeleccionarFecha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
