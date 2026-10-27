@@ -30,21 +30,41 @@ class RegistrarMovimientoActivity : AppCompatActivity() {
         // Obtenemos la base de datos local
         val baseDatos = AppDatabase.obtenerInstancia(applicationContext)
 
-// Creamos el repositorio para guardar movimientos
+    // Creamos el repositorio para guardar movimientos
         val repositorio = MovimientoRepository(baseDatos.movimientoDao())
 
-        // Recuperamos el tipo de movimiento enviado desde MainActivity
-        val tipoMovimiento = intent.getStringExtra("TIPO_MOVIMIENTO")
-        if (tipoMovimiento != "INGRESO" && tipoMovimiento != "GASTO") {
+
+        // Identificador del movimiento que se desea editar........
+        val movimientoId = intent.getLongExtra("MOVIMIENTO_ID", -1L)
+
+        // Determina si el formulario está en modo edición..
+        val modoEdicion = movimientoId > 0L
+
+
+    // Conserva el movimiento original durante la edición.
+        var movimientoOriginal: MovimientoEntity? = null
+
+
+        // Recuperamos el tipo de movimiento enviado desde MainActivity...
+        val tipoMovimientoRecibido = intent.getStringExtra("TIPO_MOVIMIENTO")
+        var tipoMovimiento = tipoMovimientoRecibido ?: ""
+
+
+        // Validar el tipo solamente al registrar un movimiento nuevo.
+        if (!modoEdicion &&
+            tipoMovimiento != "INGRESO" &&
+            tipoMovimiento != "GASTO"
+        ) {
             finish()
             return
         }
 
-        // Identificamos el título del formulario
+
+        // Identificamos el título del formulario.........
         val txtTituloMovimiento =
             findViewById<TextView>(R.id.txtTituloMovimiento)
 
-        // Cambiamos el título según el tipo de movimiento
+        // Cambiamos el título según el tipo de movimiento...............
         when (tipoMovimiento) {
 
             "INGRESO" -> {
@@ -57,7 +77,7 @@ class RegistrarMovimientoActivity : AppCompatActivity() {
 
         }
 
-        // Identificamos el botón que mostrará la fecha
+        // Identificamos el botón que mostrará la fecha....
         val btnSeleccionarFecha =
             findViewById<MaterialButton>(R.id.btnSeleccionarFecha)
 
@@ -127,6 +147,96 @@ class RegistrarMovimientoActivity : AppCompatActivity() {
         // Identificamos el grupo de selección de monedas
         val grupoMonedas =
             findViewById<MaterialButtonToggleGroup>(R.id.grupoMonedas)
+
+
+        // Cargar los datos originales cuando estamos editando.
+        if (modoEdicion) {
+
+            // Evitamos guardar antes de terminar la carga.
+            btnGuardarMovimiento.isEnabled = false
+
+            lifecycleScope.launch {
+
+                try {
+                    val movimiento =
+                        repositorio.obtenerMovimientoPorId(movimientoId)
+
+                    if (movimiento == null) {
+                        Toast.makeText(
+                            this@RegistrarMovimientoActivity,
+                            "No se encontró el movimiento",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        finish()
+                        return@launch
+                    }
+
+                    // Conservamos el movimiento original.
+                    movimientoOriginal = movimiento
+
+                    // Recuperamos su tipo.
+                    tipoMovimiento = movimiento.tipo
+
+                    // Cambiamos el título del formulario.
+                    txtTituloMovimiento.text =
+                        if (tipoMovimiento == "INGRESO") {
+                            "Editar ingreso"
+                        } else {
+                            "Editar gasto"
+                        }
+
+                    // Cargamos el concepto.
+                    edtConcepto.setText(movimiento.concepto)
+
+                    // Cargamos el importe sin perder precisión.
+                    val importeTexto =
+                        BigDecimal.valueOf(movimiento.importeCentavos)
+                            .movePointLeft(2)
+                            .toPlainString()
+
+                    edtImporte.setText(importeTexto)
+
+                    // Seleccionamos la moneda original.
+                    val botonMoneda = when (movimiento.moneda) {
+                        "GTQ" -> R.id.btnMonedaGTQ
+                        "USD" -> R.id.btnMonedaUSD
+                        "EUR" -> R.id.btnMonedaEUR
+                        else -> null
+                    }
+
+                    if (botonMoneda == null) {
+                        Toast.makeText(
+                            this@RegistrarMovimientoActivity,
+                            "Moneda no válida",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        finish()
+                        return@launch
+                    }
+
+                    grupoMonedas.check(botonMoneda)
+
+                    // Recuperamos la fecha original.
+                    fechaSeleccionada.timeInMillis = movimiento.fecha
+                    actualizarFecha()
+
+                    // Permitimos guardar después de cargar todo.
+                    btnGuardarMovimiento.isEnabled = true
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@RegistrarMovimientoActivity,
+                        "Error al cargar el movimiento",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    finish()
+                }
+            }
+        }
+
 
 // Verificación de los campos del formulario
         // Validamos los datos al presionar Guardar
@@ -210,9 +320,16 @@ class RegistrarMovimientoActivity : AppCompatActivity() {
 
 
 
+            // Conservamos el ID cuando estamos editando.
+            val idMovimiento = if (modoEdicion) {
+                movimientoOriginal?.id ?: return@setOnClickListener
+            } else {
+                0L
+            }
 
-            // Creamos el movimiento con los datos validados
+            // Creamos el movimiento con los datos validados.
             val movimiento = MovimientoEntity(
+                id = idMovimiento,
                 tipo = tipoMovimiento,
                 concepto = concepto,
                 importeCentavos = importeCentavos,
@@ -220,14 +337,27 @@ class RegistrarMovimientoActivity : AppCompatActivity() {
                 fecha = fechaSeleccionada.timeInMillis
             )
 
+
             // Guardamos el movimiento en la base de datos
             lifecycleScope.launch {
                 try {
-                    repositorio.insertarMovimiento(movimiento)
+
+                    if (modoEdicion) {
+                        repositorio.actualizarMovimiento(movimiento)
+                    } else {
+                        repositorio.insertarMovimiento(movimiento)
+                    }
+
+                    // Mensaje según la operación realizada.
+                    val mensaje = if (modoEdicion) {
+                        "Movimiento actualizado correctamente"
+                    } else {
+                        "Movimiento guardado correctamente"
+                    }
 
                     Toast.makeText(
                         this@RegistrarMovimientoActivity,
-                        "Movimiento guardado correctamente",
+                        mensaje,
                         Toast.LENGTH_SHORT
                     ).show()
 

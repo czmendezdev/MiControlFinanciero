@@ -34,4 +34,11 @@ class MovimientoRepository(
         return movimientoDao.obtenerPorId(id)
     }
 
+
+    // Actualiza un movimiento existente en la base de datos.
+    suspend fun actualizarMovimiento(movimiento: MovimientoEntity) {
+        movimientoDao.actualizarMovimiento(movimiento)
+    }
+
+
 }

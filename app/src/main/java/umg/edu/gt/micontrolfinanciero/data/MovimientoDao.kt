@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import androidx.room.Update
 
 /**
  * Define las operaciones de acceso a los movimientos
@@ -28,5 +29,11 @@ interface MovimientoDao {
     // Obtener un movimiento específico por su identificador.
     @Query("SELECT * FROM movimientos WHERE id = :id LIMIT 1")
     suspend fun obtenerPorId(id: Long): MovimientoEntity?
+
+
+    // Actualizar un movimiento existente.
+    @Update
+    suspend fun actualizarMovimiento(movimiento: MovimientoEntity)
+
 
 }

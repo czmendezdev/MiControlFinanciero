@@ -12,8 +12,25 @@ import umg.edu.gt.micontrolfinanciero.data.MovimientoRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.Intent
+import com.google.android.material.button.MaterialButton
+
 
 class DetalleMovimientoActivity : AppCompatActivity() {
+
+    // Identificador del movimiento seleccionado.
+    private var movimientoId: Long = -1L
+
+    // Componentes que muestran la información del movimiento.
+    private lateinit var txtConcepto: TextView
+    private lateinit var txtImporte: TextView
+    private lateinit var txtTipo: TextView
+    private lateinit var txtMoneda: TextView
+    private lateinit var txtFecha: TextView
+
+    // Repositorio para consultar los datos en Room.
+    private lateinit var repositorio: MovimientoRepository
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,14 +38,36 @@ class DetalleMovimientoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detalle_movimiento)
 
         // Obtenemos los componentes del diseño XML.
-        val txtConcepto = findViewById<TextView>(R.id.txtConceptoDetalle)
-        val txtImporte = findViewById<TextView>(R.id.txtImporteDetalle)
-        val txtTipo = findViewById<TextView>(R.id.txtTipoDetalle)
-        val txtMoneda = findViewById<TextView>(R.id.txtMonedaDetalle)
-        val txtFecha = findViewById<TextView>(R.id.txtFechaDetalle)
+
+        txtConcepto = findViewById(R.id.txtConceptoDetalle)
+        txtImporte = findViewById(R.id.txtImporteDetalle)
+        txtTipo = findViewById(R.id.txtTipoDetalle)
+        txtMoneda = findViewById(R.id.txtMonedaDetalle)
+        txtFecha = findViewById(R.id.txtFechaDetalle)
+
+        // Identificamos el botón para editar el movimiento.
+        val btnEditarMovimiento =
+            findViewById<MaterialButton>(R.id.btnEditarMovimiento)
+
 
         // Recibimos el identificador del movimiento.
-        val movimientoId = intent.getLongExtra("MOVIMIENTO_ID", -1L)
+        movimientoId = intent.getLongExtra("MOVIMIENTO_ID", -1L)
+
+
+        // Abrimos el formulario en modo edición.
+        btnEditarMovimiento.setOnClickListener {
+
+            val intentEdicion = Intent(
+                this,
+                RegistrarMovimientoActivity::class.java
+            )
+
+            // Enviamos el ID del movimiento seleccionado.
+            intentEdicion.putExtra("MOVIMIENTO_ID", movimientoId)
+
+            startActivity(intentEdicion)
+        }
+
 
         if (movimientoId <= 0L) {
             Toast.makeText(
@@ -42,71 +81,90 @@ class DetalleMovimientoActivity : AppCompatActivity() {
 
         // Preparamos el acceso a Room.
         val baseDatos = AppDatabase.obtenerInstancia(this)
-        val repositorio =
-            MovimientoRepository(baseDatos.movimientoDao())
 
-        // Consultamos el movimiento seleccionado.
-        lifecycleScope.launch {
+        repositorio = MovimientoRepository(
+            baseDatos.movimientoDao()
+        )
 
-            val movimiento =
-                repositorio.obtenerMovimientoPorId(movimientoId)
+    }
 
-            if (movimiento == null) {
-                Toast.makeText(
-                    this@DetalleMovimientoActivity,
-                    "No se encontró el movimiento",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
-                return@launch
-            }
 
-            // Mostramos el concepto.
-            txtConcepto.text = movimiento.concepto
+    // Actualiza los datos cada vez que regresamos a esta pantalla.
+    override fun onResume() {
+        super.onResume()
 
-            // Identificamos el tipo.
-            val esIngreso = movimiento.tipo == "INGRESO"
-
-            txtTipo.text = if (esIngreso) "Ingreso" else "Gasto"
-
-            // Identificamos la moneda.
-            val simbolo = when (movimiento.moneda) {
-                "GTQ" -> "Q"
-                "USD" -> "$"
-                "EUR" -> "€"
-                else -> movimiento.moneda
-            }
-
-            txtMoneda.text = when (movimiento.moneda) {
-                "GTQ" -> "GTQ - Quetzales"
-                "USD" -> "USD - Dólares"
-                "EUR" -> "EUR - Euros"
-                else -> movimiento.moneda
-            }
-
-            // Mostramos el importe.
-            val signo = if (esIngreso) "+" else "-"
-            val importe = movimiento.importeCentavos / 100.0
-
-            txtImporte.text =
-                "$signo $simbolo ${"%.2f".format(Locale.US, importe)}"
-
-            val color = if (esIngreso) {
-                Color.parseColor("#147D70")
-            } else {
-                Color.parseColor("#D96C63")
-            }
-
-            txtImporte.setTextColor(color)
-
-            // Mostramos la fecha.
-            val formatoFecha = SimpleDateFormat(
-                "dd/MM/yyyy",
-                Locale.getDefault()
-            )
-
-            txtFecha.text =
-                formatoFecha.format(Date(movimiento.fecha))
+        if (movimientoId > 0L && ::repositorio.isInitialized) {
+            cargarMovimiento()
         }
     }
-}
+
+
+    // Consulta nuevamente los datos del movimiento.
+        private fun cargarMovimiento() {
+
+            lifecycleScope.launch {
+
+                val movimiento =
+                    repositorio.obtenerMovimientoPorId(movimientoId)
+
+                if (movimiento == null) {
+                    Toast.makeText(
+                        this@DetalleMovimientoActivity,
+                        "No se encontró el movimiento",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                    return@launch
+                }
+
+                // Mostramos el concepto.
+                txtConcepto.text = movimiento.concepto
+
+                // Identificamos el tipo.
+                val esIngreso = movimiento.tipo == "INGRESO"
+
+                txtTipo.text = if (esIngreso) "Ingreso" else "Gasto"
+
+                // Identificamos la moneda.
+                val simbolo = when (movimiento.moneda) {
+                    "GTQ" -> "Q"
+                    "USD" -> "$"
+                    "EUR" -> "€"
+                    else -> movimiento.moneda
+                }
+
+                txtMoneda.text = when (movimiento.moneda) {
+                    "GTQ" -> "GTQ - Quetzales"
+                    "USD" -> "USD - Dólares"
+                    "EUR" -> "EUR - Euros"
+                    else -> movimiento.moneda
+                }
+
+                // Mostramos el importe.
+                val signo = if (esIngreso) "+" else "-"
+                val importe = movimiento.importeCentavos / 100.0
+
+                txtImporte.text =
+                    "$signo $simbolo ${"%.2f".format(Locale.US, importe)}"
+
+                val color = if (esIngreso) {
+                    Color.parseColor("#147D70")
+                } else {
+                    Color.parseColor("#D96C63")
+                }
+
+                txtImporte.setTextColor(color)
+
+                // Mostramos la fecha.
+                val formatoFecha = SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                )
+
+                txtFecha.text =
+                    formatoFecha.format(Date(movimiento.fecha))
+            }
+        }
+
+    }
+

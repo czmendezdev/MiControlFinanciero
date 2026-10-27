@@ -140,4 +140,24 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+
+    <!-- Botón para editar el movimiento seleccionado -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEditarMovimiento"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Editar movimiento"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#147D70"
+        app:cornerRadius="14dp"
+        app:layout_constraintTop_toBottomOf="@id/tarjetaDetalle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
