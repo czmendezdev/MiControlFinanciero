@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Tarjeta individual de un movimiento financiero -->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:contentPadding="16dp">
+
+    <!-- Contenedor de la información -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Concepto del movimiento -->
+        <TextView
+            android:id="@+id/txtConceptoItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textColor="#174C49"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txtImporteItem"
+            tools:text="Compra de materiales" />
+
+        <!-- Importe y moneda -->
+        <TextView
+            android:id="@+id/txtImporteItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#D96C63"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="- Q 25.50" />
+
+        <!-- Fecha del movimiento -->
+        <TextView
+            android:id="@+id/txtFechaItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#64748B"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/txtConceptoItem"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="26/10/2026" />
+
+        <!-- Tipo de movimiento -->
+        <TextView
+            android:id="@+id/txtTipoItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="#64748B"
+            android:textSize="13sp"
+            app:layout_constraintTop_toTopOf="@id/txtFechaItem"
+            app:layout_constraintStart_toEndOf="@id/txtFechaItem"
+            tools:text="Gasto · GTQ" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

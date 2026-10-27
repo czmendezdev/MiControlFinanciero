@@ -216,10 +216,31 @@
             android:backgroundTint="#D96C63"
             app:cornerRadius="14dp"
             app:layout_constraintTop_toBottomOf="@id/btnRegistrarIngreso"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+        <!-- Botón para consultar el historial -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerHistorial"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="24dp"
+            android:text="Ver historial"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#174C49"
+            android:backgroundTint="#E2F1EE"
+            app:cornerRadius="14dp"
+            app:layout_constraintTop_toBottomOf="@id/btnRegistrarGasto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

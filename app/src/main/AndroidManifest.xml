@@ -25,6 +25,12 @@
             android:name=".RegistrarMovimientoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Pantalla del historial de movimientos -->
+        <activity
+            android:name=".HistorialMovimientosActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

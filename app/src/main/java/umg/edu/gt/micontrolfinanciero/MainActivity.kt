@@ -57,6 +57,20 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // Abrir la pantalla del historial de movimientos.
+        val btnVerHistorial =
+            findViewById<MaterialButton>(R.id.btnVerHistorial)
+
+        btnVerHistorial.setOnClickListener {
+            val intent = Intent(
+                this,
+                HistorialMovimientosActivity::class.java
+            )
+            startActivity(intent)
+        }
+
+
+
         // Observamos los movimientos guardados en la base de datos.
         lifecycleScope.launch {
 
