@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButtonToggleGroup
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import umg.edu.gt.micontrolfinanciero.data.AppDatabase
 import umg.edu.gt.micontrolfinanciero.data.MovimientoRepository
@@ -14,36 +16,78 @@ class HistorialMovimientosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Abrimos el diseño de la pantalla del historial.
         setContentView(R.layout.activity_historial_movimientos)
 
-        // Obtenemos el RecyclerView del archivo XML.
+        // Configuramos la lista de movimientos.
         val recyclerMovimientos =
             findViewById<RecyclerView>(R.id.recyclerMovimientos)
 
-        // Organizamos los movimientos en una lista vertical.
         recyclerMovimientos.layoutManager =
             LinearLayoutManager(this)
 
-        // Creamos y conectamos el adaptador.
         val adaptador = MovimientoAdapter()
-
         recyclerMovimientos.adapter = adaptador
 
-        // Accedemos a la base de datos local.
+        // Obtenemos el repositorio de Room.
         val baseDatos = AppDatabase.obtenerInstancia(this)
 
         val repositorio =
             MovimientoRepository(baseDatos.movimientoDao())
 
-        // Observamos los movimientos almacenados en Room.
-        lifecycleScope.launch {
+        // Obtenemos el grupo de botones de filtros.
+        val grupoFiltros =
+            findViewById<MaterialButtonToggleGroup>(
+                R.id.grupoFiltrosHistorial
+            )
 
-            repositorio.obtenerMovimientos().collect { movimientos ->
+        // Guarda la tarea que observa los movimientos.
+        var trabajoFiltro: Job? = null
 
-                // Actualizamos los datos mostrados en pantalla.
-                adaptador.actualizarMovimientos(movimientos)
+        // Cambia la consulta según el filtro seleccionado.
+        fun aplicarFiltro(tipo: String?) {
+
+            // Detenemos la consulta anterior.
+            trabajoFiltro?.cancel()
+
+            trabajoFiltro = lifecycleScope.launch {
+
+                val movimientosFlow = if (tipo == null) {
+                    repositorio.obtenerMovimientos()
+                } else {
+                    baseDatos.movimientoDao().obtenerPorTipo(tipo)
+                }
+
+                movimientosFlow.collect { movimientos ->
+                    adaptador.actualizarMovimientos(movimientos)
+                }
             }
         }
+
+        // Escuchamos los cambios de selección.
+        grupoFiltros.addOnButtonCheckedListener {
+                _, checkedId, isChecked ->
+
+            if (isChecked) {
+
+                when (checkedId) {
+
+                    R.id.btnFiltroTodos -> {
+                        aplicarFiltro(null)
+                    }
+
+                    R.id.btnFiltroIngresos -> {
+                        aplicarFiltro("INGRESO")
+                    }
+
+                    R.id.btnFiltroGastos -> {
+                        aplicarFiltro("GASTO")
+                    }
+                }
+            }
+        }
+
+        // Mostramos todos los movimientos al abrir.
+        grupoFiltros.check(R.id.btnFiltroTodos)
+        aplicarFiltro(null)
     }
 }
