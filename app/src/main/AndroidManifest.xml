@@ -31,13 +31,14 @@
             android:name=".HistorialMovimientosActivity"
             android:exported="false" />
 
-
         <!-- Pantalla de detalles de un movimiento -->
         <activity
             android:name=".DetalleMovimientoActivity"
             android:exported="false" />
-
-
+        <activity
+            android:name=".ResumenFinancieroActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

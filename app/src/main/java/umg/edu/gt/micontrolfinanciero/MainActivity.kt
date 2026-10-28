@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch //Inicia una corrutina, que utilizaremos para o
 import android.content.Intent
 import com.google.android.material.button.MaterialButton
 
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         val txtSaldoGTQ = findViewById<TextView>(R.id.txtSaldoGTQ)
         val txtSaldoUSD = findViewById<TextView>(R.id.txtSaldoUSD)
         val txtSaldoEUR = findViewById<TextView>(R.id.txtSaldoEUR)
+
 
 
 
@@ -68,6 +70,22 @@ class MainActivity : AppCompatActivity() {
             )
             startActivity(intent)
         }
+
+
+        val btnVerResumen = findViewById<MaterialButton>(R.id.btnVerResumen)
+
+
+// Abrimos la pantalla de resumen financiero.
+        btnVerResumen.setOnClickListener {
+
+            val intentResumen = Intent(
+                this,
+                ResumenFinancieroActivity::class.java
+            )
+
+            startActivity(intentResumen)
+        }
+
 
 
 
